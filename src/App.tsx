@@ -189,9 +189,12 @@ export default function App() {
     initGeolocation();
   }, [initGeolocation]);
 
-  // Countdown timer & 20s auto-refresh
+  // Countdown timer & 20s auto-refresh (paused when app is in background to save battery)
   useEffect(() => {
-    const timer = setInterval(() => {
+    const tick = () => {
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
       const now = Date.now();
       const diff = Math.max(0, Math.ceil((nextUpdateTimeRef.current - now) / 1000));
       setSecondsRemaining(diff);
@@ -199,9 +202,21 @@ export default function App() {
       if (diff <= 0 && stationIdRef.current) {
         loadStationData(stationIdRef.current, stationNameRef.current);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(timer);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        tick();
+      }
+    };
+
+    const timer = setInterval(tick, 1000);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [loadStationData]);
 
   // Toggle row importance
