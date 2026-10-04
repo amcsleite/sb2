@@ -51,21 +51,32 @@ html, body {
 .header-top-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.3em;
+  justify-content: center;
+  position: relative;
+}
+
+.header-right-actions {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
 }
 
 .mode-toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.25em;
-  padding: 0.25em 0.5em;
-  border-radius: 0.3em;
+  gap: 0.18em;
+  padding: 0.18em 0.35em;
+  border-radius: 0.25em;
   background-color: rgba(255, 255, 255, 0.18);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  font-size: 0.75em;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 0.62em;
   font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;

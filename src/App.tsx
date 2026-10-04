@@ -313,17 +313,6 @@ export default function App() {
       {/* Header */}
       <div className="header">
         <div className="header-top-row">
-          {/* Toggle button for relative minutes vs HH:MM */}
-          <button
-            type="button"
-            onClick={handleToggleTimeMode}
-            className="mode-toggle-btn"
-            title={isClock ? 'Switch to relative minutes' : 'Switch to HH:MM time'}
-          >
-            <Clock className="w-3 h-3" />
-            <span>{isClock ? 'HH:MM' : 'min'}</span>
-          </button>
-
           <h1
             className="station-name"
             onClick={() => setIsSearchOpen(true)}
@@ -333,15 +322,25 @@ export default function App() {
             <Search className="w-3.5 h-3.5 opacity-75 inline shrink-0" />
           </h1>
 
-          {/* Right slot: PWA install or spacer for centered station name */}
-          <div className="flex items-center justify-end min-w-[2.5em]">
+          {/* Right slot: time toggle + optional PWA install */}
+          <div className="header-right-actions">
+            <button
+              type="button"
+              onClick={handleToggleTimeMode}
+              className="mode-toggle-btn"
+              title={isClock ? 'Switch to relative minutes' : 'Switch to HH:MM time'}
+            >
+              <Clock className="w-2.5 h-2.5" />
+              <span>{isClock ? 'HH:MM' : 'min'}</span>
+            </button>
+
             {!isInstalled && isInstallable && (
               <button
                 onClick={install}
                 className="p-1 rounded bg-white/20 hover:bg-white/30 text-white text-xs flex items-center"
                 title="Install App"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3 h-3" />
               </button>
             )}
             {!isInstalled && isIOS && (
@@ -350,7 +349,7 @@ export default function App() {
                 className="p-1 rounded bg-white/20 hover:bg-white/30 text-white text-xs flex items-center"
                 title="Install on iPhone"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3 h-3" />
               </button>
             )}
           </div>
