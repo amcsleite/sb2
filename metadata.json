@@ -1,0 +1,6 @@
+{
+  "name": "Swiss Station Board",
+  "description": "Live public transit departure board displaying real-time Swiss train, tram, and bus departures with automatic nearest station detection and live countdowns.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
