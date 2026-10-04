@@ -75,11 +75,16 @@ export default function App() {
   stationIdRef.current = stationId;
   stationNameRef.current = stationName;
 
-  // Responsive font calculation matching original implementation
+  // Responsive font calculation matching browser size even in taller standalone PWA mode
   const calculateFontSize = useCallback(() => {
-    const vh = window.innerHeight;
-    const targetHeight = vh / 10;
-    const baseFontSize = targetHeight / 3.5;
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+    const vh = isStandalone ? Math.max(500, window.innerHeight - 140) : window.innerHeight;
+    const vw = window.innerWidth;
+    const heightBasedSize = vh / 35;
+    const widthBasedMax = vw < 768 ? vw / 19.5 : 24;
+    const baseFontSize = Math.min(heightBasedSize, widthBasedMax);
     const fontSize = Math.max(14, Math.min(24, baseFontSize));
     document.documentElement.style.setProperty('--base-size', `${fontSize}px`);
   }, []);
