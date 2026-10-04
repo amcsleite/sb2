@@ -39,7 +39,7 @@ html, body {
 
 .header {
   text-align: center;
-  padding: 0.6em 0.6em;
+  padding: 0.45em 0.4em 0.55em 0.4em;
   background-color: #004f9f;
   color: white;
   margin-bottom: 0.6em;
@@ -49,15 +49,14 @@ html, body {
 }
 
 .header-top-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  width: 100%;
 }
 
 .header-right-actions {
   position: absolute;
-  top: 0.2em;
-  right: 0.22em;
+  top: 0.18em;
+  right: 0.2em;
   display: flex;
   align-items: center;
   gap: 0.2em;
@@ -86,8 +85,9 @@ html, body {
 }
 
 .station-name {
-  font-size: 1.5em;
-  margin: 0.45em 0 0 0;
+  font-size: clamp(1.15em, 5.2vw, 1.5em);
+  line-height: 1.15;
+  margin: 0.55em 0 0 0;
   padding: 0;
   width: 100%;
   max-width: 100%;
