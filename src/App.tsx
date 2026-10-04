@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Star, Download, Search, MapPin, X, WifiOff, Clock } from 'lucide-react';
+import { Star, Download, Search, MapPin, X, WifiOff, Clock, RefreshCw } from 'lucide-react';
 import {
   fetchNearestStations,
   fetchStationBoard,
@@ -358,7 +358,10 @@ export default function App() {
           {lastUpdateTime ? (
             <>
               Last updated: {formatTimeWithSeconds(new Date(lastUpdateTime))}{' '}
-              <span className="countdown">(next update in {secondsRemaining}s)</span>
+              <span className="countdown inline-flex items-center gap-0.5 ml-1.5">
+                <RefreshCw className="w-3 h-3" />
+                {secondsRemaining}s
+              </span>
             </>
           ) : (
             'Updating...'
