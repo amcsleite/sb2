@@ -50,7 +50,6 @@ export default function App() {
   const [searchResults, setSearchResults] = useState<StationLocation[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [showIOSPrompt, setShowIOSPrompt] = useState<boolean>(false);
-  const [showSamsungPrompt, setShowSamsungPrompt] = useState<boolean>(false);
 
   // Time display mode: 'relative' (e.g. 3 7 11 15) vs 'clock' (e.g. 14:05 14:09 ...)
   const [timeMode, setTimeMode] = useState<'relative' | 'clock'>(() => {
@@ -65,7 +64,7 @@ export default function App() {
   const [importantLines, setImportantLines] = useState<string[]>([]);
 
   // PWA & Connectivity hooks
-  const { isInstallable, isInstalled, isIOS, isSamsungBrowser, install } = usePWAInstall();
+  const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const isOnline = useOnlineStatus();
 
   const nextUpdateTimeRef = useRef<number>(Date.now() + 20000);
@@ -369,16 +368,7 @@ export default function App() {
               <span>{isClock ? 'HH:MM' : 'min'}</span>
             </button>
 
-            {!isInstalled && isSamsungBrowser && (
-              <button
-                onClick={() => setShowSamsungPrompt(true)}
-                className="p-1 rounded bg-white/20 hover:bg-white/30 text-white text-xs flex items-center"
-                title="Install App"
-              >
-                <Download className="w-3 h-3" />
-              </button>
-            )}
-            {!isInstalled && !isSamsungBrowser && isInstallable && (
+            {!isInstalled && isInstallable && (
               <button
                 onClick={install}
                 className="p-1 rounded bg-white/20 hover:bg-white/30 text-white text-xs flex items-center"
@@ -582,34 +572,6 @@ export default function App() {
               className="w-full py-2 bg-[#004f9f] text-white rounded-lg text-xs font-semibold"
             >
               Done
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Samsung Internet Clean Install Modal */}
-      {showSamsungPrompt && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white max-w-xs w-full rounded-xl p-5 shadow-xl text-center text-slate-800">
-            <h3 className="font-bold text-base mb-2">Install App</h3>
-            <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-              Samsung Internet uses an outdated Android wrapper that triggers a system warning. For a clean install:
-            </p>
-            <a
-              href={`intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;package=com.android.chrome;end`}
-              onClick={() => setShowSamsungPrompt(false)}
-              className="block w-full py-2.5 px-3 mb-2.5 bg-[#004f9f] text-white rounded-lg text-xs font-semibold no-underline"
-            >
-              Open in Chrome to Install
-            </a>
-            <p className="text-[11px] text-gray-500 mb-3 leading-relaxed">
-              Or tap <strong>≡</strong> (bottom right) → <strong>Add page to</strong> → <strong>Home screen</strong>.
-            </p>
-            <button
-              onClick={() => setShowSamsungPrompt(false)}
-              className="w-full py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-medium"
-            >
-              Close
             </button>
           </div>
         </div>
