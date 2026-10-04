@@ -70,6 +70,7 @@ export default function App() {
   const nextUpdateTimeRef = useRef<number>(Date.now() + 20000);
   const stationIdRef = useRef<string | null>(null);
   const stationNameRef = useRef<string>('Loading station...');
+  const useGpsModeRef = useRef<boolean>(true);
 
   stationIdRef.current = stationId;
   stationNameRef.current = stationName;
@@ -140,56 +141,71 @@ export default function App() {
     }
   }, []);
 
-  // Geolocation detection
-  const initGeolocation = useCallback(() => {
-    setStatusMessage('Locating nearest station...');
-    setIsError(false);
+  // Geolocation detection (silent=true refreshes GPS + nearest stop every 20s without blanking screen)
+  const initGeolocation = useCallback(
+    (silent = false) => {
+      useGpsModeRef.current = true;
+      nextUpdateTimeRef.current = Date.now() + 20000;
+      setSecondsRemaining(20);
 
-    if (!navigator.geolocation) {
-      loadStationData('8503000', 'Zürich HB');
-      return;
-    }
+      if (!silent) {
+        setStatusMessage('Locating nearest station...');
+        setIsError(false);
+      }
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const stations = await fetchNearestStations(lat, lng);
+      const fallbackId = stationIdRef.current || '8503000';
+      const fallbackName =
+        stationNameRef.current && stationNameRef.current !== 'Loading station...'
+          ? stationNameRef.current
+          : 'Zürich HB';
 
-          let foundId: string | null = null;
-          let foundName: string | null = null;
+      if (!navigator.geolocation) {
+        loadStationData(fallbackId, fallbackName);
+        return;
+      }
 
-          for (const s of stations) {
-            if (s.id) {
-              foundId = s.id;
-              foundName = s.name;
-              break;
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const stations = await fetchNearestStations(lat, lng);
+
+            let foundId: string | null = null;
+            let foundName: string | null = null;
+
+            for (const s of stations) {
+              if (s.id) {
+                foundId = s.id;
+                foundName = s.name;
+                break;
+              }
             }
-          }
 
-          if (foundId && foundName) {
-            loadStationData(foundId, foundName);
-          } else {
-            loadStationData('8503000', 'Zürich HB');
+            if (foundId && foundName) {
+              loadStationData(foundId, foundName);
+            } else {
+              loadStationData(fallbackId, fallbackName);
+            }
+          } catch {
+            loadStationData(fallbackId, fallbackName);
           }
-        } catch {
-          loadStationData('8503000', 'Zürich HB');
-        }
-      },
-      () => {
-        loadStationData('8503000', 'Zürich HB');
-      },
-      { timeout: 8000, enableHighAccuracy: true }
-    );
-  }, [loadStationData]);
+        },
+        () => {
+          loadStationData(fallbackId, fallbackName);
+        },
+        { timeout: 6000, maximumAge: 0, enableHighAccuracy: true }
+      );
+    },
+    [loadStationData]
+  );
 
   // Initial load
   useEffect(() => {
-    initGeolocation();
+    initGeolocation(false);
   }, [initGeolocation]);
 
-  // Countdown timer & 20s auto-refresh (paused when app is in background to save battery)
+  // Countdown timer & 20s auto-refresh (refreshes GPS + nearest station + board when active; paused in background)
   useEffect(() => {
     const tick = () => {
       if (document.visibilityState === 'hidden') {
@@ -199,8 +215,12 @@ export default function App() {
       const diff = Math.max(0, Math.ceil((nextUpdateTimeRef.current - now) / 1000));
       setSecondsRemaining(diff);
 
-      if (diff <= 0 && stationIdRef.current) {
-        loadStationData(stationIdRef.current, stationNameRef.current);
+      if (diff <= 0) {
+        if (useGpsModeRef.current) {
+          initGeolocation(true);
+        } else if (stationIdRef.current) {
+          loadStationData(stationIdRef.current, stationNameRef.current);
+        }
       }
     };
 
@@ -217,7 +237,7 @@ export default function App() {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [loadStationData]);
+  }, [initGeolocation, loadStationData]);
 
   // Toggle row importance
   const handleToggleImportant = (e: React.MouseEvent, row: GroupedConnectionRow) => {
@@ -471,7 +491,7 @@ export default function App() {
             <button
               onClick={() => {
                 setIsSearchOpen(false);
-                initGeolocation();
+                initGeolocation(false);
               }}
               className="mt-3 w-full py-2 px-3 rounded-lg bg-[#004f9f] text-white font-medium text-xs flex items-center justify-center gap-1.5"
             >
@@ -501,6 +521,7 @@ export default function App() {
                   <button
                     key={s.id}
                     onClick={() => {
+                      useGpsModeRef.current = false;
                       setIsSearchOpen(false);
                       setSearchTerm('');
                       loadStationData(s.id, s.name);
@@ -520,6 +541,7 @@ export default function App() {
                     <button
                       key={preset.id}
                       onClick={() => {
+                        useGpsModeRef.current = false;
                         setIsSearchOpen(false);
                         loadStationData(preset.id, preset.name);
                       }}
