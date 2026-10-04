@@ -52,29 +52,28 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
 .header-right-actions {
   position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0.2em;
+  right: 0.22em;
   display: flex;
   align-items: center;
-  gap: 0.25em;
+  gap: 0.2em;
+  z-index: 2;
 }
 
 .mode-toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.18em;
-  padding: 0.18em 0.35em;
-  border-radius: 0.25em;
+  gap: 0.14em;
+  padding: 0.14em 0.28em;
+  border-radius: 0.22em;
   background-color: rgba(255, 255, 255, 0.18);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  font-size: 0.62em;
+  font-size: 0.55em;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -90,6 +89,7 @@ html, body {
   font-size: 1.5em;
   margin: 0;
   padding: 0;
+  max-width: calc(100% - 3.6em);
   font-weight: 700;
   display: inline-flex;
   align-items: center;
