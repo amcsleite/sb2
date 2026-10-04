@@ -318,8 +318,7 @@ export default function App() {
             onClick={() => setIsSearchOpen(true)}
             title="Tap to switch station"
           >
-            <span>{stationName}</span>
-            <Search className="w-3.5 h-3.5 opacity-75 inline shrink-0" />
+            {stationName}
           </h1>
 
           {/* Right slot: time toggle + optional PWA install */}
